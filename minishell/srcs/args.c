@@ -1,69 +1,76 @@
 #include "minishell.h"
 
-static t_arg	*ft_args_lst_new(char *str, int *i)
+static void	ft_word_size(char *str, int *i)
 {
-	t_arg	*node;
-//	int		j;
-//
-//	j = 0;
-	node = malloc(sizeof(t_arg));
-	node->cmd = malloc(sizeof(t_cmd*));
-	node->cmd->cmd = (char **)malloc(sizeof(char *));
-	if (!node)
-		return (NULL);
-//	while(str[*i])
-//	{
-//		if (str[*i] == ' ')
-//		{
-//			str = ft_slesh(str, i);
-//			printf("%s\n", ft_substr(str, 0, i));
-//			node->cmd->cmd[0] = ft_substr(str, 0, *i);
-			node->cmd->cmd = ft_split(str, ' ');
-//			printf("%s\n", node->cmd->cmd[0]);
-//			break;
-//		}
-//		i++;
-//	}
-	node->cmd->in = NULL;
-	node->cmd->out = NULL;
-	node->cmd->next = NULL;
+	*i += 1;
+	while (str[*i] && str[*i] != ' ' && str[*i] != '<' && str[*i] != '>' && str[*i] != '|')
+	{
+		if (str[*i] == '\'')
+			ft_gap(str, i);
+		else if (str[*i] == '\"')
+			ft_gap2(str, i);
+		else
+			*i += 1;
+	}
+}
+
+static int	ft_words_count(char *str, int *i, t_cmd **cmd)
+{
+	int		num;
+
+	num = 0;
+	while(str[*i] && str[*i] != '|')
+	{
+		if (str[*i] == ' ')
+			*i += 1;
+		else if (str[*i] == '<' || str[*i] == '>')
+			ft_redirect(str, i);
+		else
+		{
+			num++;
+			(*cmd)->id += 1;
+			ft_word_size(str, i);
+		}
+	}
+	return (num);
+}
+
+static	t_cmd	*ft_args_node_last(t_cmd *lst)
+{
+	t_cmd	*node;
+
+	node = NULL;
+	while (lst)
+	{
+		node = lst;
+		lst = lst->next;
+	}
 	return (node);
 }
 
-static t_arg	*ft_args_lst_last(t_arg *lst)
+void	ft_node_add_back(t_cmd **cmd, t_cmd *new)
 {
-	if (!lst)
-		return (NULL);
-	while (lst->cmd->next)
-		lst->cmd = lst->cmd->next;
-	return (lst);
-}
-
-static t_arg	**ft_args_lst_add_back(t_arg **lst, t_arg *new)
-{
-	t_arg	*tmp;
-
-	if (lst)
-	{
-		tmp = ft_args_lst_last(*lst);
-		tmp->cmd->next = new->cmd;
-	}
+	if (*cmd)
+		ft_args_node_last(*cmd)->next = new;
 	else
-		lst = &new;
-	return(lst);
+		*cmd = new;
 }
 
-t_arg	*ft_space(char *str, int *i, t_arg *arg)
+t_cmd	*ft_make_node(char *str, int *i)
 {
-	t_arg	*tmp;
+	t_cmd	*node;
+	int		words_count;
 
-//	while(str)
-//	{
-		tmp = ft_args_lst_new(str, i);
-		arg = ft_args_lst_add_back(arg, tmp);
-//		free(tmp);
-//		free(tmp->cmd);
-//		i++;
-//	}
-	return (arg);
+	node = malloc(sizeof(t_cmd));
+	if(!node)
+		exit(printf("MALLOC ERROR\n"));
+	node->id = 0;
+	node->in = NULL;
+	node->out = NULL;
+	node->next = NULL;
+	words_count = ft_words_count(str, i, &node);
+	node->cmd = malloc(sizeof(char *) * (words_count + 1));
+	if (!node->cmd)
+		exit(printf("MALLOC ERROR\n"));
+	return (node);
 }
