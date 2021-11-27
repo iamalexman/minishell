@@ -6,7 +6,7 @@
 /*   By: jkassand <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/18 12:27:18 by jkassand          #+#    #+#             */
-/*   Updated: 2021/11/13 20:42:32 by jkassand         ###   ########.fr       */
+/*   Updated: 2021/11/27 13:00:57 by jkassand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,10 +24,7 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	i = ft_strlen(s1) + ft_strlen(s2) + 1;
 	str = malloc(i);
 	if (str == NULL)
-	{
-		perror("malloc");
 		return (NULL);
-	}
 	i = 0;
 	j = 0;
 	while (s1[j] != 0)

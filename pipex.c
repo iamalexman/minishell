@@ -6,7 +6,7 @@
 /*   By: jkassand <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/27 01:29:54 by jkassand          #+#    #+#             */
-/*   Updated: 2021/11/27 01:29:56 by jkassand         ###   ########.fr       */
+/*   Updated: 2021/11/27 14:27:06 by jkassand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@ void	ft_close(t_arg *arg, int *file, int num)
 	i = -1;
 	while (++i < num)
 	{
+		if (!arg->fd || !arg->fd[i])
+			continue ;
 		close(arg->fd[i][0]);
 		close(arg->fd[i][1]);
 		free(arg->fd[i]);
@@ -73,22 +75,30 @@ static void	ft_waitpid(pid_t *pid, int num, t_arg *arg)
 
 void	set_signal(int i, t_cmd *cmd)
 {
-	int	num;
+	int		num;
+	int		ms;
 
 	num = 0;
 	while (num++ < i)
 		cmd = cmd->next;
-	if (ft_strcmp(cmd->cmd[0], "minishell") && \
-			ft_strcmp(cmd->cmd[0], "./minishell"))
-	{
-		signal(SIGINT, sig_pipex);
-		signal(SIGQUIT, sig_pipex);
-	}
-	else
+	if (!cmd->cmd || !cmd->cmd[0])
 	{
 		signal(SIGINT, SIG_IGN);
 		signal(SIGQUIT, SIG_IGN);
+		return ;
 	}
+	ms = 0;
+	if (ft_strlen(cmd->cmd[0]) > 9 && !ft_strcmp(\
+				&cmd->cmd[0][ft_strlen(cmd->cmd[0]) - 10], "/minishell"))
+		ms = 1;
+	if (ft_strcmp(cmd->cmd[0], "minishell") && !ms)
+	{
+		signal(SIGINT, sig_pipex);
+		signal(SIGQUIT, sig_pipex);
+		return ;
+	}
+	signal(SIGINT, SIG_IGN);
+	signal(SIGQUIT, SIG_IGN);
 }
 
 void	pipex(t_arg *arg)

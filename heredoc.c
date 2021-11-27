@@ -6,7 +6,7 @@
 /*   By: jkassand <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/27 01:29:07 by jkassand          #+#    #+#             */
-/*   Updated: 2021/11/27 01:29:10 by jkassand         ###   ########.fr       */
+/*   Updated: 2021/11/27 19:24:23 by jkassand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,17 @@
 
 static int	ft_strcmp_h(const char *s1, const char *s2)
 {
-	int	res;
+	int	i;
 
-	res = 0;
-	while ((*s1 || *s2) && !res)
-		res = (unsigned char)*(s1++) - (unsigned char)*(s2++);
-	return (res);
+	i = 0;
+	while (s1[i] || s2[i])
+	{
+		if (s1[i] == s2[i])
+			i++;
+		else
+			return (1);
+	}
+	return (0);
 }
 
 static void	gnl(char **line, t_arg *arg)

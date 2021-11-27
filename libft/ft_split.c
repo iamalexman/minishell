@@ -6,7 +6,7 @@
 /*   By: jkassand <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/18 15:35:06 by jkassand          #+#    #+#             */
-/*   Updated: 2021/08/30 21:00:56 by jkassand         ###   ########.fr       */
+/*   Updated: 2021/11/27 13:15:04 by jkassand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,15 +48,25 @@ static char	*ft_str(char const *s, char c, int *i)
 		len++;
 	buf = malloc(len - *i + 1);
 	if (buf == NULL)
-	{
-		perror("malloc");
-		exit(1);
-	}
+		return (NULL);
 	j = 0;
 	while (*i < len)
 		buf[j++] = s[(*i)++];
 	buf[j] = 0;
 	return (buf);
+}
+
+void	free_page(char **page, int j)
+{
+	int	i;
+
+	i = 0;
+	while (i < j)
+	{
+		free(page[i]);
+		i++;
+	}
+	free(page);
 }
 
 char	**ft_split(char const *s, char c)
@@ -71,14 +81,18 @@ char	**ft_split(char const *s, char c)
 	num = ft_lines(s, c);
 	page = malloc((num + 1) * sizeof(*page));
 	if (!page)
-	{
-		perror("malloc");
-		exit(1);
-	}
+		return (NULL);
 	i = 0;
 	j = -1;
 	while (++j < num)
+	{
 		page[j] = ft_str(s, c, &i);
+		if (!page[j])
+		{
+			free_page(page, j);
+			return (NULL);
+		}
+	}
 	page[j] = NULL;
 	return (page);
 }

@@ -6,7 +6,7 @@
 /*   By: ebalgruu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/27 01:29:33 by ebalgruu          #+#    #+#             */
-/*   Updated: 2021/11/27 01:29:36 by ebalgruu         ###   ########.fr       */
+/*   Updated: 2021/11/27 14:11:42 by jkassand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,22 +19,20 @@ static int	ft_if_shlvl(t_env *tmp, t_arg *arg)
 	value = 1;
 	while (tmp)
 	{
-		if (!ft_strcmp(tmp->key, "SHLVL"))
+		if (!ft_strcmp(tmp->key, "SHLVL") && !tmp->value[0])
 		{
+			free(tmp->sep);
+			tmp->sep = ft_strdup_pars("=", arg);
 			free(tmp->value);
-			if (!tmp->value[0])
-			{
-				free(tmp->sep);
-				tmp->sep = ft_strdup_pars("=", arg);
-				tmp->value = ft_strdup_pars("1", arg);
-				return (1);
-			}
-			else
-			{
-				value += ft_atoi(tmp->value);
-				tmp->value = ft_itoa_pars(value, arg);
-				return (1);
-			}
+			tmp->value = ft_strdup_pars("1", arg);
+			return (1);
+		}
+		else if (!ft_strcmp(tmp->key, "SHLVL") && tmp->value[0])
+		{
+			value += ft_atoi(tmp->value);
+			free(tmp->value);
+			tmp->value = ft_itoa_pars(value, arg);
+			return (1);
 		}
 		tmp = tmp->next;
 	}

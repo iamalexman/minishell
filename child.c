@@ -6,7 +6,7 @@
 /*   By: jkassand <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/27 01:28:06 by jkassand          #+#    #+#             */
-/*   Updated: 2021/11/27 01:28:10 by jkassand         ###   ########.fr       */
+/*   Updated: 2021/11/27 19:04:21 by jkassand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,10 +106,7 @@ void	child(int i, t_arg *arg)
 	while (num++ < i)
 		cmd = cmd->next;
 	if (!cmd->cmd || !cmd->cmd[0])
-	{
-		ft_close(arg, NULL, arg->num);
-		ft_exit(arg->errnum, NULL, arg);
-	}
+		exit(0);
 	open_dup(i, cmd, arg);
 	if (cmd->built)
 		ft_exit(run_built(cmd, arg), NULL, arg);
